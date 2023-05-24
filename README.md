@@ -14,3 +14,8 @@ in settings.json per .vscode file.
 Switching from Arudiono IDE to Espressif IDF for SD2 project.
 
 This repo holds introductory ultrasonic sensor IDF launch files.
+
+
+From VS Code, launch sample_project directly from esp-idf --> using command palette.
+
+From there, use main folder and components for simple project.
