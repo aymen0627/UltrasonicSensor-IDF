@@ -7,30 +7,29 @@
 
 #define MAX_DISTANCE_CM 500 // 5m max
 
-#define TRIGGER_GPIO_1 32 //sensor1
+#define TRIGGER_GPIO_1 5 //sensor1
 #define ECHO_GPIO_1 14
 
-#define TRIGGER_GPIO_2 21 //sensor2
-#define ECHO_GPIO_2 39
+#define TRIGGER_GPIO_2 5 //sensor2
+#define ECHO_GPIO_2 26 
 
 
 #define TRIGGER_GPIO_3 5 //sensor3
 #define ECHO_GPIO_3 35
 
-#define TRIGGER_GPIO_4 33 //sensor4
-#define ECHO_GPIO_4 26
+#define TRIGGER_GPIO_4 5 //sensor4
+#define ECHO_GPIO_4 36 //VP on ESP
 
+#define TRIGGER_GPIO_5 5 //sensor5
+#define ECHO_GPIO_5 15
 
-#define TRIGGER_GPIO_5 25 //sensor5
-#define ECHO_GPIO_5 34
+#define TRIGGER_GPIO_6 5 //sensor6
+#define ECHO_GPIO_6 18 
 
-#define TRIGGER_GPIO_6 27 //sensor6
-#define ECHO_GPIO_6 36
+#define TRIGGER_GPIO_7 5 //sensor7
+#define ECHO_GPIO_7 21
 
-#define TRIGGER_GPIO_7 18 //sensor7
-#define ECHO_GPIO_7 19
-
-#define TRIGGER_GPIO_8 23 //sensor8
+#define TRIGGER_GPIO_8 5 //sensor8
 #define ECHO_GPIO_8 22
 
 void ultrasonic_test(void *pvParameters)
@@ -41,37 +40,37 @@ void ultrasonic_test(void *pvParameters)
     };
 
     ultrasonic_sensor_t sensor2 = {
-        .trigger_pin = TRIGGER_GPIO_2,
+        .trigger_pin = TRIGGER_GPIO_1,
         .echo_pin = ECHO_GPIO_2
     };
 
     ultrasonic_sensor_t sensor3 = {
-        .trigger_pin = TRIGGER_GPIO_3,
+        .trigger_pin = TRIGGER_GPIO_1,
         .echo_pin = ECHO_GPIO_3
     };
 
     ultrasonic_sensor_t sensor4 = {
-        .trigger_pin = TRIGGER_GPIO_4,
+        .trigger_pin = TRIGGER_GPIO_1,
         .echo_pin = ECHO_GPIO_4
     };
 
     ultrasonic_sensor_t sensor5 = {
-        .trigger_pin = TRIGGER_GPIO_5,
+        .trigger_pin = TRIGGER_GPIO_1,
         .echo_pin = ECHO_GPIO_5
     };
 
     ultrasonic_sensor_t sensor6 = {
-        .trigger_pin = TRIGGER_GPIO_6,
+        .trigger_pin = TRIGGER_GPIO_1,
         .echo_pin = ECHO_GPIO_6
     };
 
     ultrasonic_sensor_t sensor7 = {
-        .trigger_pin = TRIGGER_GPIO_7,
+        .trigger_pin = TRIGGER_GPIO_1,
         .echo_pin = ECHO_GPIO_7
     };
 
     ultrasonic_sensor_t sensor8 = {
-        .trigger_pin = TRIGGER_GPIO_8,
+        .trigger_pin = TRIGGER_GPIO_1,
         .echo_pin = ECHO_GPIO_8
     };
 
@@ -171,11 +170,12 @@ void ultrasonic_test(void *pvParameters)
 
 
 
-        vTaskDelay(pdMS_TO_TICKS(500));
+        vTaskDelay(pdMS_TO_TICKS(900));
     }
 }
 
 void app_main()
-{
+{    
+    //function executed, name of the task, stack size * x (* arbitrary allocation size), parameter passed into task, handle for task)
     xTaskCreate(ultrasonic_test, "ultrasonic_test", configMINIMAL_STACK_SIZE * 3, NULL, 5, NULL);
 }
