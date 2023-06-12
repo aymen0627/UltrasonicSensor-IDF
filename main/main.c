@@ -5,46 +5,68 @@
 #include <ultrasonic.h>
 #include <esp_err.h>
 
-
 #define MAX_DISTANCE_CM 500 // 5m max
 
 #define TRIGGER_GPIO 32
-#define ECHO_GPIO 25
-
+#define ECHO_GPIO_1 25
+#define ECHO_GPIO_2 26
+#define ECHO_GPIO_3 35
 
 void ultrasonic_test(void *pvParameters)
 {
-    ultrasonic_sensor_t sensor = {
+    ultrasonic_sensor_t sensor1 = {
         .trigger_pin = TRIGGER_GPIO,
-        .echo_pin = ECHO_GPIO
+        .echo_pin = ECHO_GPIO_1
     };
 
-    ultrasonic_init(&sensor);
+    ultrasonic_sensor_t sensor2 = {
+        .trigger_pin = TRIGGER_GPIO,
+        .echo_pin = ECHO_GPIO_2
+    };
+
+    ultrasonic_sensor_t sensor3 = {
+        .trigger_pin = TRIGGER_GPIO,
+        .echo_pin = ECHO_GPIO_3
+    };
+
+    ultrasonic_init(&sensor1);
+    ultrasonic_init(&sensor2);
+    ultrasonic_init(&sensor3);
 
     while (true)
     {
-        float distance;
-        esp_err_t res = ultrasonic_measure(&sensor, MAX_DISTANCE_CM, &distance);
-        if (res != ESP_OK)
+        float distance1, distance2, distance3;
+
+        esp_err_t res1 = ultrasonic_measure(&sensor1, MAX_DISTANCE_CM, &distance1);
+        esp_err_t res2 = ultrasonic_measure(&sensor2, MAX_DISTANCE_CM, &distance2);
+        esp_err_t res3 = ultrasonic_measure(&sensor3, MAX_DISTANCE_CM, &distance3);
+
+        if (res1 != ESP_OK)
         {
-            printf("Error %d: ", res);
-            switch (res)
-            {
-                case ESP_ERR_ULTRASONIC_PING:
-                    printf("Cannot ping (device is in invalid state)\n");
-                    break;
-                case ESP_ERR_ULTRASONIC_PING_TIMEOUT:
-                    printf("Ping timeout (no device found)\n");
-                    break;
-                case ESP_ERR_ULTRASONIC_ECHO_TIMEOUT:
-                    printf("Echo timeout (i.e. distance too big)\n");
-                    break;
-                default:
-                    printf("%s\n", esp_err_to_name(res));
-            }
+            printf("Sensor 1 - Error %d\n", res1);
         }
         else
-            printf("Distance: %0.04f cm\n", distance*100);
+        {
+            printf("Sensor 1 - Distance: %.2f cm\n", distance1 * 100);
+        }
+
+        if (res2 != ESP_OK)
+        {
+            printf("Sensor 2 - Error %d\n", res2);
+        }
+        else
+        {
+            printf("Sensor 2 - Distance: %.2f cm\n", distance2 * 100);
+        }
+
+        if (res3 != ESP_OK)
+        {
+            printf("Sensor 3 - Error %d\n", res3);
+        }
+        else
+        {
+            printf("Sensor 3 - Distance: %.2f cm\n", distance3 * 100);
+        }
 
         vTaskDelay(pdMS_TO_TICKS(500));
     }
