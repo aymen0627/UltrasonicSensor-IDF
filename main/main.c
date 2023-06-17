@@ -98,6 +98,7 @@ void ultrasonic_test(void *pvParameters)
 }
 
 void app_main()
-{
+{    
+    //function executed, name of the task, stack size * x (* arbitrary allocation size), parameter passed into task, handle for task)
     xTaskCreate(ultrasonic_test, "ultrasonic_test", configMINIMAL_STACK_SIZE * 3, NULL, 5, NULL);
 }
