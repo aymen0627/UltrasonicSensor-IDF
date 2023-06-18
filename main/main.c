@@ -40,8 +40,13 @@ void ultrasonic_test(void *pvParameters)
     ultrasonic_init(&sensor3);
     ultrasonic_init(&sensor4);
 
+    bool camera1 = false;
+    bool camera2 = false;
+
     const TickType_t sensorDelay = pdMS_TO_TICKS(100); // Adjust the delay as needed
     // speed_of_sound = 331.4 + (0.6 * temperature)
+
+    int THRESHOLD_DISTANCE = 10; // 10 cm for testing library
 
     while (true)
     {
@@ -94,7 +99,45 @@ void ultrasonic_test(void *pvParameters)
             printf("Sensor 4 - Distance: %.2f cm\n", distance4 * 100);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(900));
+    
+        if(distance1  * 100 > THRESHOLD_DISTANCE){
+          //  printf("Camera 1: ON\n");
+            camera1 = false;
+
+        }
+
+        if(distance2 * 100 > THRESHOLD_DISTANCE){
+            //printf("Camera 1: OFF\n");
+            camera1 = false;
+        }
+
+        if(distance1 * 100 <THRESHOLD_DISTANCE && distance2 * 100 < THRESHOLD_DISTANCE && camera1 == false){
+            //printf("Camera 1: ON\n");
+            camera1 = true;
+            printf("Camera 1: ON\n");
+        }
+
+
+
+         if(distance3  * 100 > THRESHOLD_DISTANCE){
+            camera2 = false;
+
+        }
+
+        if(distance4 * 100 > THRESHOLD_DISTANCE){
+            camera2 = false;
+        }
+
+        if(distance3 * 100 <THRESHOLD_DISTANCE && distance4 * 100 < THRESHOLD_DISTANCE && camera2 == false){
+            camera2 = true;
+            printf("Camera 2: ON\n");
+        }
+
+
+
+
+
+        vTaskDelay(pdMS_TO_TICKS(70));
     }
 }
 
