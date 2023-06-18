@@ -102,12 +102,22 @@ void ultrasonic_test(void *pvParameters)
     
         if(distance1  * 100 > THRESHOLD_DISTANCE){
           //  printf("Camera 1: ON\n");
+          if(camera1 == true){
+
+            printf("Car ENTERING zone 1\n");
+
+          }
             camera1 = false;
 
         }
 
         if(distance2 * 100 > THRESHOLD_DISTANCE){
             //printf("Camera 1: OFF\n");
+            if(camera1 == true){
+
+            printf("Car LEAVING ZONE 1\n");
+
+          }
             camera1 = false;
         }
 
@@ -120,11 +130,21 @@ void ultrasonic_test(void *pvParameters)
 
 
          if(distance3  * 100 > THRESHOLD_DISTANCE){
+             if(camera2 == true){
+
+            printf("Car ENTERING zone 2\n");
+
+          }
             camera2 = false;
 
         }
 
         if(distance4 * 100 > THRESHOLD_DISTANCE){
+             if(camera2 == true){
+
+            printf("Car LEAVING zone 2\n");
+
+          }
             camera2 = false;
         }
 
@@ -137,7 +157,7 @@ void ultrasonic_test(void *pvParameters)
 
 
 
-        vTaskDelay(pdMS_TO_TICKS(70));
+        vTaskDelay(pdMS_TO_TICKS(700));
     }
 }
 
