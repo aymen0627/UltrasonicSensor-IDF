@@ -12,6 +12,10 @@
 #define ECHO_GPIO_2 36
 #define ECHO_GPIO_3 35
 #define ECHO_GPIO_4 18
+#define ECHO_GPIO_5 23
+#define ECHO_GPIO_6 22
+#define ECHO_GPIO_7 27
+#define ECHO_GPIO_8 5
 
 void ultrasonic_test(void *pvParameters)
 {
@@ -35,22 +39,50 @@ void ultrasonic_test(void *pvParameters)
         .echo_pin = ECHO_GPIO_4
     };
 
+    ultrasonic_sensor_t sensor5 = {
+        .trigger_pin = TRIGGER_GPIO,
+        .echo_pin = ECHO_GPIO_5
+    };
+
+    ultrasonic_sensor_t sensor6 = {
+        .trigger_pin = TRIGGER_GPIO,
+        .echo_pin = ECHO_GPIO_6
+    };
+
+    ultrasonic_sensor_t sensor7 = {
+        .trigger_pin = TRIGGER_GPIO,
+        .echo_pin = ECHO_GPIO_7
+    };
+
+    ultrasonic_sensor_t sensor8 = {
+        .trigger_pin = TRIGGER_GPIO,
+        .echo_pin = ECHO_GPIO_8
+    };
+
     ultrasonic_init(&sensor1);
     ultrasonic_init(&sensor2);
     ultrasonic_init(&sensor3);
     ultrasonic_init(&sensor4);
+    ultrasonic_init(&sensor5);
+    ultrasonic_init(&sensor6);
+    ultrasonic_init(&sensor7);
+    ultrasonic_init(&sensor8);
 
     bool camera1 = false;
     bool camera2 = false;
+    bool camera3 = false;
+    bool camera4 = false;
 
-    const TickType_t sensorDelay = pdMS_TO_TICKS(100); // Adjust the delay as needed
+
+
+    const TickType_t sensorDelay = pdMS_TO_TICKS(70); // Adjust the delay as needed between measurements
     // speed_of_sound = 331.4 + (0.6 * temperature)
 
     int THRESHOLD_DISTANCE = 10; // 10 cm for testing library
 
     while (true)
     {
-        float distance1, distance2, distance3, distance4;
+        float distance1, distance2, distance3, distance4, distance5, distance6, distance7, distance8;
 
         esp_err_t res1 = ultrasonic_measure(&sensor1, MAX_DISTANCE_CM, &distance1);
         vTaskDelay(sensorDelay); // Introduce delay before triggering sensor 2
@@ -62,6 +94,18 @@ void ultrasonic_test(void *pvParameters)
         vTaskDelay(sensorDelay); // Introduce delay before triggering sensor 4
 
         esp_err_t res4 = ultrasonic_measure(&sensor4, MAX_DISTANCE_CM, &distance4);
+        vTaskDelay(sensorDelay); // Introduce delay before triggering sensor 5
+
+        esp_err_t res5 = ultrasonic_measure(&sensor5, MAX_DISTANCE_CM, &distance5);
+        vTaskDelay(sensorDelay); // Introduce delay before triggering sensor 6
+
+        esp_err_t res6 = ultrasonic_measure(&sensor6, MAX_DISTANCE_CM, &distance6);
+        vTaskDelay(sensorDelay); // Introduce delay before triggering sensor 7
+
+        esp_err_t res7 = ultrasonic_measure(&sensor7, MAX_DISTANCE_CM, &distance7);
+        vTaskDelay(sensorDelay); // Introduce delay before triggering sensor 8
+
+        esp_err_t res8 = ultrasonic_measure(&sensor8, MAX_DISTANCE_CM, &distance8);
 
         if (res1 != ESP_OK)
         {
@@ -97,6 +141,42 @@ void ultrasonic_test(void *pvParameters)
         else
         {
             printf("Sensor 4 - Distance: %.2f cm\n", distance4 * 100);
+        }
+
+        if (res5 != ESP_OK)
+        {
+            printf("Sensor 5 - Error %d\n", res5);
+        }
+        else
+        {
+            printf("Sensor 5 - Distance: %.2f cm\n", distance5 * 100);
+        }
+
+        if (res6 != ESP_OK)
+        {
+            printf("Sensor 6 - Error %d\n", res6);
+        }
+        else
+        {
+            printf("Sensor 6 - Distance: %.2f cm\n", distance6 * 100);
+        }
+
+        if (res7 != ESP_OK)
+        {
+            printf("Sensor 7 - Error %d\n", res7);
+        }
+        else
+        {
+            printf("Sensor 7 - Distance: %.2f cm\n", distance7 * 100);
+        }
+
+        if (res8 != ESP_OK)
+        {
+            printf("Sensor 8 - Error %d\n", res8);
+        }
+        else
+        {
+            printf("Sensor 8 - Distance: %.2f cm\n", distance8 * 100);
         }
 
     
@@ -154,10 +234,58 @@ void ultrasonic_test(void *pvParameters)
         }
 
 
+        if(distance5  * 100 > THRESHOLD_DISTANCE){
+             if(camera3 == true){
+
+            printf("Car ENTERING zone 3\n");
+
+          }
+            camera3 = false;
+
+        }
+
+        if(distance6 * 100 > THRESHOLD_DISTANCE){
+             if(camera3 == true){
+
+            printf("Car LEAVING zone 3\n");
+
+          }
+            camera3 = false;
+        }
+
+        if(distance5 * 100 <THRESHOLD_DISTANCE && distance6 * 100 < THRESHOLD_DISTANCE && camera3 == false){
+            camera3 = true;
+            printf("Camera 3: ON\n");
+        }
+
+        if(distance7  * 100 > THRESHOLD_DISTANCE){
+             if(camera4 == true){
+
+            printf("Car ENTERING zone 4\n");
+
+          }
+            camera4 = false;
+
+        }
+
+        if(distance8 * 100 > THRESHOLD_DISTANCE){
+             if(camera4 == true){
+
+            printf("Car LEAVING zone 4\n");
+
+          }
+            camera4 = false;
+        }
+
+        if(distance7 * 100 <THRESHOLD_DISTANCE && distance8 * 100 < THRESHOLD_DISTANCE && camera4 == false){
+            camera4 = true;
+            printf("Camera 4: ON\n");
+        }
 
 
 
-        vTaskDelay(pdMS_TO_TICKS(700));
+
+        vTaskDelay(pdMS_TO_TICKS(70));
     }
 }
 
