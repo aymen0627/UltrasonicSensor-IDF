@@ -21,7 +21,7 @@ From VS Code, launch sample_project directly from esp-idf --> using command pale
 From there, use main folder and components for simple project.
 
 
-#Documention and resources used:  
+# Documention and resources used:  
 
 -UncleRus Repo:
 https://github.com/UncleRus/esp-idf-lib
