@@ -5,17 +5,21 @@
 #include <ultrasonic.h>
 #include <esp_err.h>
 
+#define ANSI_COLOR_RED     "\x1b[31m"
+
 #define MAX_DISTANCE_CM 500 // 5m max - 16 feet
 
+//common trigger pin for all sensors
 #define TRIGGER_GPIO 32
-#define ECHO_GPIO_1 25
-#define ECHO_GPIO_2 36
-#define ECHO_GPIO_3 35
-#define ECHO_GPIO_4 18
-#define ECHO_GPIO_5 23
-#define ECHO_GPIO_6 22
-#define ECHO_GPIO_7 27
-#define ECHO_GPIO_8 5
+
+#define ECHO_GPIO_1 36 //sensor 1 echo
+#define ECHO_GPIO_2 25 //sensor 2 echo
+#define ECHO_GPIO_3 35 //sensor 3 echo
+#define ECHO_GPIO_4 18 //sensor 4 echo
+#define ECHO_GPIO_5 23 //sensor 5 echo
+#define ECHO_GPIO_6 22 //sensor 6 echo
+#define ECHO_GPIO_7 27 //sensor 7 echo
+#define ECHO_GPIO_8 5 //sensor 8 echo
 
 void ultrasonic_test(void *pvParameters)
 {
@@ -68,20 +72,25 @@ void ultrasonic_test(void *pvParameters)
     ultrasonic_init(&sensor7);
     ultrasonic_init(&sensor8);
 
+    //activate camera, start as off
     bool camera1 = false;
     bool camera2 = false;
     bool camera3 = false;
     bool camera4 = false;
 
 
-
-    const TickType_t sensorDelay = pdMS_TO_TICKS(70); // Adjust the delay as needed between measurements
+    // delay after each sensor measurement
+    const TickType_t sensorDelay = pdMS_TO_TICKS(50);
     // speed_of_sound = 331.4 + (0.6 * temperature)
 
-    int THRESHOLD_DISTANCE = 10; // 10 cm for testing library
+    //1 foot = 30.48 centimeters
+    //threshold vehicle detection distance
+    int THRESHOLD_DISTANCE = 350; // 10 cm for testing library
 
     while (true)
     {
+
+        
         float distance1, distance2, distance3, distance4, distance5, distance6, distance7, distance8;
 
         esp_err_t res1 = ultrasonic_measure(&sensor1, MAX_DISTANCE_CM, &distance1);
@@ -107,6 +116,7 @@ void ultrasonic_test(void *pvParameters)
 
         esp_err_t res8 = ultrasonic_measure(&sensor8, MAX_DISTANCE_CM, &distance8);
 
+        //for each sensor, display distance if no error
         if (res1 != ESP_OK)
         {
             printf("Sensor 1 - Error %d\n", res1);
@@ -131,12 +141,12 @@ void ultrasonic_test(void *pvParameters)
         }
         else
         {
-            printf("Sensor 3 - Distance: %.2f cm\n", distance3 * 100);
+            printf( "Sensor 3 - Distance: %.2f cm\n", distance3 * 100);
         }
 
         if (res4 != ESP_OK)
         {
-            printf("Sensor 4 - Error %d\n", res4);
+            printf( "Sensor 4 - Error %d\n", res4);
         }
         else
         {
@@ -180,8 +190,10 @@ void ultrasonic_test(void *pvParameters)
         }
 
     
+
+        //if distance for sensor 1 is greater than threshold, vehicle entering zone
         if(distance1  * 100 > THRESHOLD_DISTANCE){
-          //  printf("Camera 1: ON\n");
+          
           if(camera1 == true){
 
             printf("Car ENTERING zone 1\n");
@@ -190,9 +202,9 @@ void ultrasonic_test(void *pvParameters)
             camera1 = false;
 
         }
-
+        // if distance for sensor 2 is greater than threshold, vehicle leaving zone
         if(distance2 * 100 > THRESHOLD_DISTANCE){
-            //printf("Camera 1: OFF\n");
+            
             if(camera1 == true){
 
             printf("Car LEAVING ZONE 1\n");
@@ -201,8 +213,9 @@ void ultrasonic_test(void *pvParameters)
             camera1 = false;
         }
 
+        // if both sensors are less than threshold, vehicle between sensors --> turn on camera
         if(distance1 * 100 <THRESHOLD_DISTANCE && distance2 * 100 < THRESHOLD_DISTANCE && camera1 == false){
-            //printf("Camera 1: ON\n");
+           
             camera1 = true;
             printf("Camera 1: ON\n");
         }
